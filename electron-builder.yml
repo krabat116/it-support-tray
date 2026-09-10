@@ -1,0 +1,61 @@
+# ============================================================
+# electron-builder.yml
+# Windows NSIS 인스톨러 빌드 설정.
+# "npm run dist" 명령으로 .exe 설치 파일을 생성합니다.
+# ============================================================
+
+appId: com.itsupport.tray
+productName: IT Support Tool
+copyright: Copyright © 2024
+
+directories:
+  output: release          # 빌드 결과물 저장 폴더
+  buildResources: resources
+
+# 앱에 포함할 파일 목록
+files:
+  - dist/**/*
+  - config/**/*
+  - node_modules/**/*
+  - package.json
+
+# 앱 번들 밖에 추가로 포함할 리소스 (process.resourcesPath로 접근)
+extraResources:
+  # 앱 설정 파일
+  - from: config/
+    to: config/
+    filter:
+      - "**/*"
+  # PDF 자가진단 가이드
+  - from: resources/guides/
+    to: guides/
+    filter:
+      - "*.pdf"
+  # 아이콘 (트레이용)
+  - from: resources/icon.png
+    to: icon.png
+
+# Windows 빌드 설정
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: resources/icon.ico
+  # asInvoker: 앱 자체는 일반 권한으로 실행 (관리자 권한 명령만 UAC로 상승)
+  requestedExecutionLevel: asInvoker
+
+# NSIS 인스톨러 상세 설정
+nsis:
+  oneClick: false                        # 사용자가 설치 옵션을 선택할 수 있게
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: false           # 바탕화면 바로가기 생성 안 함
+  createStartMenuShortcut: true
+  shortcutName: IT Support Tool
+  runAfterFinish: true                   # 설치 완료 후 앱 자동 실행
+  installerIcon: resources/icon.ico
+  uninstallerIcon: resources/icon.ico
+  license: null                          # 라이선스 동의 화면 건너뜀
+
+# 자동 업데이트 서버 (Phase 2에서 설정)
+publish: null

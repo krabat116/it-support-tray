@@ -1,0 +1,47 @@
+{
+  "name": "it-support-tray",
+  "version": "1.0.0",
+  "description": "IT 서포트 자가진단 시스템 트레이 앱 — 고객이 간단한 문제를 스스로 해결하도록 돕습니다",
+  "main": "dist/main/main.js",
+  "scripts": {
+    "create-icons": "node scripts/create-placeholder-icons.js",
+    "dev:main": "tsc -p tsconfig.main.json --watch",
+    "dev:renderer": "webpack --config webpack.config.js --watch --mode development",
+    "dev": "concurrently -n main,renderer,electron -c blue,green,yellow \"npm run dev:main\" \"npm run dev:renderer\" \"wait-on dist/main/main.js dist/renderer/index.html && ELECTRON_RUN_AS_NODE= electron .\"",
+    "build:main": "tsc -p tsconfig.main.json",
+    "build:renderer": "webpack --config webpack.config.js --mode production",
+    "build": "npm run build:main && npm run build:renderer",
+    "start": "ELECTRON_RUN_AS_NODE= electron .",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder"
+  },
+  "keywords": [
+    "electron",
+    "tray",
+    "it-support",
+    "windows"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "concurrently": "^8.0.0",
+    "css-loader": "^6.0.0",
+    "electron": "^27.3.11",
+    "electron-builder": "^24.0.0",
+    "html-webpack-plugin": "^5.0.0",
+    "style-loader": "^3.0.0",
+    "ts-loader": "^9.0.0",
+    "typescript": "^5.0.0",
+    "wait-on": "^7.0.0",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^5.0.0"
+  },
+  "dependencies": {
+    "auto-launch": "^5.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  }
+}

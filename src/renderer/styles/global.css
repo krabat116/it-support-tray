@@ -1,0 +1,351 @@
+/* ============================================================
+   src/renderer/styles/global.css
+   Global UI styles — compact tray popup design based on a dark theme.
+   ============================================================ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Color palette */
+  --bg-primary:    #1a1a2e;
+  --bg-secondary:  #16213e;
+  --bg-tertiary:   #0f3460;
+  --bg-hover:      #1e2a4a;
+  --accent:        #4fc3f7;
+  --accent-hover:  #81d4fa;
+  --text-primary:  #e0e0e0;
+  --text-muted:    #9e9e9e;
+  --success:       #66bb6a;
+  --error:         #ef5350;
+  --pdf-color:     #ffb74d;
+  --border:        rgba(255, 255, 255, 0.08);
+
+  /* Radius */
+  --radius:    8px;
+  --radius-sm: 4px;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;         /* Prevent scroll (app-body handles scrolling) */
+  user-select: none;        /* Disable text selection (app-like feel) */
+  -webkit-user-select: none;
+}
+
+/* ──────────────────────────────────────────
+   Layout
+────────────────────────────────────────── */
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-height: 520px;
+  background: var(--bg-primary);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* Header: acts as a drag handle via -webkit-app-region: drag */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 10px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  -webkit-app-region: drag;
+}
+
+.app-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--accent);
+}
+
+.app-icon {
+  font-size: 16px;
+}
+
+/* Close button is excluded from the drag region */
+.close-btn {
+  -webkit-app-region: no-drag;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+/* Body: vertically scrollable */
+.app-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
+
+.app-body::-webkit-scrollbar       { width: 4px; }
+.app-body::-webkit-scrollbar-track { background: transparent; }
+.app-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+}
+
+/* Footer: version display */
+.app-footer {
+  padding: 5px 14px;
+  text-align: right;
+  font-size: 11px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ──────────────────────────────────────────
+   Status messages (loading / error)
+────────────────────────────────────────── */
+
+.status-message {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.status-message.error {
+  color: var(--error);
+}
+
+/* ──────────────────────────────────────────
+   Accordion
+────────────────────────────────────────── */
+
+.accordion {
+  padding: 4px 0;
+}
+
+.category-section {
+  border-bottom: 1px solid var(--border);
+}
+
+.category-section:last-child {
+  border-bottom: none;
+}
+
+/* Category header button */
+.category-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.category-header:hover {
+  background: var(--bg-hover);
+}
+
+/* Open state header: accent color */
+.category-section.open .category-header {
+  color: var(--accent);
+}
+
+.category-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.category-title {
+  flex: 1;
+}
+
+.category-chevron {
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+/* Category expanded content */
+.category-content {
+  padding: 2px 10px 10px;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* ──────────────────────────────────────────
+   Section groups (Quick Fix / Settings / PDF)
+────────────────────────────────────────── */
+
+.section-group {
+  margin-top: 8px;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+  margin-bottom: 5px;
+  padding-left: 2px;
+  text-transform: uppercase;
+}
+
+/* ──────────────────────────────────────────
+   Common button styles
+────────────────────────────────────────── */
+
+.action-btn {
+  width: 100%;
+  padding: 7px 10px;
+  margin-bottom: 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s, border-color 0.15s;
+  line-height: 1.3;
+}
+
+.action-btn:last-child {
+  margin-bottom: 0;
+}
+
+/* Quick Fix button */
+.quick-fix-btn {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: rgba(79, 195, 247, 0.15);
+}
+
+.quick-fix-btn:hover:not(:disabled) {
+  background: #1a4a7a;
+  border-color: var(--accent);
+}
+
+.quick-fix-btn.running {
+  background: rgba(79, 195, 247, 0.06);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.quick-fix-btn.success {
+  background: rgba(102, 187, 106, 0.12);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.quick-fix-btn.error {
+  background: rgba(239, 83, 80, 0.12);
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.quick-fix-btn:disabled {
+  opacity: 0.7;
+}
+
+/* Admin rights badge */
+.admin-badge {
+  font-size: 11px;
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+/* Settings shortcut button */
+.settings-btn {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+
+.settings-btn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-primary);
+}
+
+/* PDF guide button */
+.pdf-btn {
+  background: rgba(255, 183, 77, 0.07);
+  color: var(--pdf-color);
+  border-color: rgba(255, 183, 77, 0.2);
+}
+
+.pdf-btn:hover {
+  background: rgba(255, 183, 77, 0.13);
+}
+
+/* ──────────────────────────────────────────
+   Quick Fix execution result feedback
+────────────────────────────────────────── */
+
+.quick-fix-wrapper {
+  margin-bottom: 4px;
+}
+
+.quick-fix-wrapper .action-btn {
+  margin-bottom: 0;
+}
+
+.quick-fix-wrapper:last-child {
+  margin-bottom: 0;
+}
+
+.status-feedback {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  margin-top: 1px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.status-feedback.success {
+  background: rgba(102, 187, 106, 0.08);
+  color: var(--success);
+}
+
+.status-feedback.error {
+  background: rgba(239, 83, 80, 0.08);
+  color: var(--error);
+}
+
+.status-feedback.running {
+  background: rgba(79, 195, 247, 0.06);
+  color: var(--text-muted);
+}

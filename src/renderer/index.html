@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      CSP (Content Security Policy):
+      - script-src 'self': only the bundled renderer.js is allowed; inline scripts are blocked
+      - style-src 'self' 'unsafe-inline': required for style-loader to inject inline CSS
+      - all external URL loads are blocked (security)
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+    />
+    <title>IT Support Tool</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- renderer.js is automatically injected as a script tag by HtmlWebpackPlugin -->
+  </body>
+</html>

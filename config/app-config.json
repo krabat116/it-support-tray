@@ -1,0 +1,125 @@
+{
+  "appName": "IT Support Tool",
+  "version": "1.0.0",
+  "categories": [
+    {
+      "id": "network",
+      "title": "Network Issues",
+      "icon": "🌐",
+      "quickFixes": [
+        {
+          "id": "flush-dns",
+          "label": "Flush DNS Cache",
+          "description": "Clears the DNS cache when you can't connect to the internet or specific sites won't load",
+          "requiresAdmin": false,
+          "command": "ipconfig /flushdns"
+        },
+        {
+          "id": "reset-winsock",
+          "label": "Reset Network Stack",
+          "description": "Resets Winsock and TCP/IP stack — restart required after running",
+          "requiresAdmin": true,
+          "command": "netsh winsock reset && netsh int ip reset"
+        }
+      ],
+      "settingsShortcuts": [
+        {
+          "id": "network-settings",
+          "label": "Network & Internet Settings",
+          "uri": "ms-settings:network"
+        },
+        {
+          "id": "wifi-settings",
+          "label": "Wi-Fi Settings",
+          "uri": "ms-settings:network-wifi"
+        },
+        {
+          "id": "vpn-settings",
+          "label": "VPN Settings",
+          "uri": "ms-settings:network-vpn"
+        }
+      ],
+      "pdfGuide": {
+        "id": "network-guide",
+        "label": "Open Network Troubleshooting Guide",
+        "filename": "network-guide.pdf"
+      }
+    },
+    {
+      "id": "printer",
+      "title": "Printer Issues",
+      "icon": "🖨️",
+      "quickFixes": [
+        {
+          "id": "restart-spooler",
+          "label": "Restart Print Spooler",
+          "description": "Restarts the spooler service when printing fails or the print queue is stuck",
+          "requiresAdmin": true,
+          "command": "net stop spooler && net start spooler"
+        },
+        {
+          "id": "clear-print-queue",
+          "label": "Clear Print Queue",
+          "description": "Stops the spooler, deletes all pending print jobs, then restarts the spooler",
+          "requiresAdmin": true,
+          "command": "net stop spooler && del /Q /F /S \"%SystemRoot%\\System32\\spool\\PRINTERS\\*\" && net start spooler"
+        }
+      ],
+      "settingsShortcuts": [
+        {
+          "id": "printer-settings",
+          "label": "Printers & Scanners Settings",
+          "uri": "ms-settings:printers"
+        }
+      ],
+      "pdfGuide": {
+        "id": "printer-guide",
+        "label": "Open Printer Troubleshooting Guide",
+        "filename": "printer-guide.pdf"
+      }
+    },
+    {
+      "id": "performance",
+      "title": "General Performance",
+      "icon": "⚡",
+      "quickFixes": [
+        {
+          "id": "clean-temp",
+          "label": "Clean Temp Files",
+          "description": "Deletes temporary files in the %TEMP% folder to free up disk space",
+          "requiresAdmin": false,
+          "command": "clean-temp"
+        },
+        {
+          "id": "empty-recycle-bin",
+          "label": "Empty Recycle Bin",
+          "description": "Empties the Recycle Bin to free up disk space",
+          "requiresAdmin": false,
+          "command": "empty-recycle-bin"
+        }
+      ],
+      "settingsShortcuts": [
+        {
+          "id": "windows-update",
+          "label": "Windows Update",
+          "uri": "ms-settings:windowsupdate"
+        },
+        {
+          "id": "storage-settings",
+          "label": "Storage Settings (Disk Cleanup)",
+          "uri": "ms-settings:storagesense"
+        },
+        {
+          "id": "startup-apps",
+          "label": "Startup Apps",
+          "uri": "ms-settings:startupapps"
+        }
+      ],
+      "pdfGuide": {
+        "id": "performance-guide",
+        "label": "Open PC Performance Optimization Guide",
+        "filename": "performance-guide.pdf"
+      }
+    }
+  ]
+}
