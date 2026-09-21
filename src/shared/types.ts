@@ -102,13 +102,15 @@ export interface QuickFixResult {
 
 /** A single Quick Fix usage event */
 export interface UsageEvent {
-  timestamp: string;   // ISO 8601 format (new Date().toISOString())
+  timestamp: string;    // ISO 8601 format (new Date().toISOString())
   categoryId: string;
   actionId: string;
   success: boolean;
+  hostname?: string;    // Computer name (for multi-device tracking)
+  appVersion?: string;  // App version at time of event
 }
 
-/** Full usage log structure saved to local JSON file */
+/** Full usage log structure saved to local JSON file (offline fallback) */
 export interface UsageLog {
   appVersion: string;
   events: UsageEvent[];

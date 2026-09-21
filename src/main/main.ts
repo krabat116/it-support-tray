@@ -16,6 +16,7 @@ import { createPopupWindow, togglePopupWindow, getPopupWindow } from './window-m
 import { registerIpcHandlers } from './ipc-handlers';
 import { setupAutoLaunch } from './auto-launch-setup';
 import { startRealtimeSync } from './config-loader';
+import { setupAutoUpdater } from './auto-updater';
 import { IpcChannel } from '../shared/types';
 
 // ─── macOS: Hide app icon from Dock (tray-only app) ───────────────
@@ -58,6 +59,9 @@ if (!gotTheLock) {
         win.webContents.send(IpcChannel.CONFIG_UPDATED);
       }
     });
+
+    // 6. Check GitHub Releases for updates (packaged builds only)
+    setupAutoUpdater();
 
     console.log('[Main] IT Support Tool started.');
   });

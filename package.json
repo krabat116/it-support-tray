@@ -43,6 +43,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0",
     "auto-launch": "^5.0.0",
+    "electron-updater": "^6.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "ws": "^8.21.3"

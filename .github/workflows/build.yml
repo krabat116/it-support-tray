@@ -1,7 +1,12 @@
 # ============================================================
 # .github/workflows/build.yml
-# main 브랜치에 push하면 Windows .exe 인스톨러를 자동 빌드합니다.
-# 빌드 결과물은 GitHub Actions → Artifacts에서 다운로드 가능합니다.
+#
+# 두 가지 트리거:
+#   1. main 브랜치 push → .exe 빌드 후 Artifact로 저장 (테스트용)
+#   2. v*.*.* 태그 push → GitHub Release 생성 및 배포 (프로덕션)
+#
+# 릴리즈 방법:
+#   git tag v1.0.1 && git push origin v1.0.1
 # ============================================================
 
 name: Build Windows Installer
@@ -9,7 +14,8 @@ name: Build Windows Installer
 on:
   push:
     branches: [main]
-  workflow_dispatch:  # GitHub UI에서 수동 실행 가능
+    tags: ['v*.*.*']
+  workflow_dispatch:
 
 jobs:
   build:
@@ -40,14 +46,25 @@ jobs:
             "anonKey": "${{ secrets.SUPABASE_ANON_KEY }}"
           }' > config/supabase.json
 
-      # 5. 빌드 및 패키징
-      - name: Build and package
-        run: npm run dist
+      # 5a. 빌드 소스 컴파일 (공통)
+      - name: Build source
+        run: npm run build
+
+      # 5b. main 브랜치 push: 패키징만 (Artifact로 저장)
+      - name: Package (branch build)
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        run: npx electron-builder
+
+      # 5c. 태그 push: 패키징 + GitHub Release 자동 생성
+      - name: Package and publish release
+        if: startsWith(github.ref, 'refs/tags/')
+        run: npx electron-builder --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 6. .exe 아티팩트 업로드 (30일 보관)
+      # 6. Artifact 업로드 (브랜치 빌드만 — 릴리즈 빌드는 GitHub Release에 자동 업로드됨)
       - name: Upload installer artifact
+        if: "!startsWith(github.ref, 'refs/tags/')"
         uses: actions/upload-artifact@v4
         with:
           name: IT-Support-Tool-Windows-${{ github.sha }}

@@ -55,5 +55,9 @@ nsis:
   runAfterFinish: true                   # 설치 완료 후 앱 자동 실행
   license: null                          # 라이선스 동의 화면 건너뜀
 
-# 자동 업데이트 서버 (Phase 2에서 설정)
-publish: null
+# GitHub Releases를 업데이트 서버로 사용
+# "v*.*.*" 태그 push 시 GitHub Actions가 릴리즈를 생성하고 electron-updater가 이를 감지합니다.
+publish:
+  provider: github
+  owner: krabat116
+  repo: it-support-tray
