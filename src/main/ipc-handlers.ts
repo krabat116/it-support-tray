@@ -91,10 +91,22 @@ export function registerIpcHandlers(): void {
 
   // ────────────────────────────────────────────────────────
   // OPEN_PDF: Open PDF troubleshooting guide
-  // Opens the bundled PDF with the default viewer via shell.openPath().
+  // If filename is a remote URL (Supabase Storage), opens in browser.
+  // Otherwise, opens the bundled local PDF with the default viewer.
   // ────────────────────────────────────────────────────────
   ipcMain.handle(IpcChannel.OPEN_PDF, async (_event: IpcMainInvokeEvent, filename: string) => {
-    // Prevent path traversal: filename must not contain path separators
+    // Remote URL (from Supabase) → open in browser (supports download too)
+    if (filename.startsWith('https://')) {
+      try {
+        await shell.openExternal(filename);
+        return { success: true };
+      } catch (err) {
+        console.error('[IPC:OPEN_PDF] Failed to open URL:', err);
+        return { success: false, error: String(err) };
+      }
+    }
+
+    // Local file → prevent path traversal and open with default PDF viewer
     const safeName = path.basename(filename);
 
     const pdfPath = app.isPackaged

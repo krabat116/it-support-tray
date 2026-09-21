@@ -12,9 +12,11 @@
 
 import { app } from 'electron';
 import { createTray, destroyTray, getTray } from './tray-manager';
-import { createPopupWindow, togglePopupWindow } from './window-manager';
+import { createPopupWindow, togglePopupWindow, getPopupWindow } from './window-manager';
 import { registerIpcHandlers } from './ipc-handlers';
 import { setupAutoLaunch } from './auto-launch-setup';
+import { startRealtimeSync } from './config-loader';
+import { IpcChannel } from '../shared/types';
 
 // ─── macOS: Hide app icon from Dock (tray-only app) ───────────────
 if (process.platform === 'darwin') {
@@ -48,6 +50,14 @@ if (!gotTheLock) {
 
     // 4. Register auto-launch in Windows registry
     await setupAutoLaunch();
+
+    // 5. Start Supabase Realtime sync — notify renderer when config changes
+    startRealtimeSync(() => {
+      const win = getPopupWindow();
+      if (win && !win.isDestroyed()) {
+        win.webContents.send(IpcChannel.CONFIG_UPDATED);
+      }
+    });
 
     console.log('[Main] IT Support Tool started.');
   });

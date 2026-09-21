@@ -28,6 +28,18 @@ const App: React.FC = () => {
       .finally(() => setLoading(false));
   }, []);
 
+  // Listen for Supabase Realtime config updates pushed from the main process
+  useEffect(() => {
+    const unsubscribe = window.electronAPI.onConfigUpdated(() => {
+      window.electronAPI.getConfig().then(result => {
+        if (result.success && result.data) {
+          setConfig(result.data);
+        }
+      });
+    });
+    return unsubscribe;
+  }, []);
+
   const handleClose = () => {
     window.electronAPI.hideWindow();
   };

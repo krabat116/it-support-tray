@@ -72,6 +72,8 @@ export const IpcChannel = {
   GET_CONFIG: 'get-config',
   /** renderer → main: Hide popup window */
   HIDE_WINDOW: 'hide-window',
+  /** main → renderer: Config updated via Supabase Realtime */
+  CONFIG_UPDATED: 'config-updated',
 } as const;
 
 // ----------------------------------------------------------------

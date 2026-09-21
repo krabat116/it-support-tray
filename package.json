@@ -27,6 +27,7 @@
     "@types/node": "^20.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "@types/ws": "^8.18.1",
     "concurrently": "^8.0.0",
     "css-loader": "^6.0.0",
     "electron": "^27.3.11",
@@ -40,8 +41,10 @@
     "webpack-cli": "^5.0.0"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.0.0",
     "auto-launch": "^5.0.0",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "ws": "^8.21.3"
   }
 }

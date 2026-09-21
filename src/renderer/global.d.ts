@@ -15,6 +15,7 @@ declare global {
       openSettings: (uri: string) => Promise<{ success: boolean; error?: string }>;
       openPdf: (filename: string) => Promise<{ success: boolean; error?: string }>;
       hideWindow: () => void;
+      onConfigUpdated: (callback: () => void) => () => void;
     };
   }
 }

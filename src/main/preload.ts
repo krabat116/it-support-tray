@@ -9,7 +9,7 @@
 // it can only use the API exposed here.
 // ============================================================
 
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron';
 import { IpcChannel } from '../shared/types';
 import type { AppConfig, QuickFixRequest, QuickFixResult } from '../shared/types';
 
@@ -46,6 +46,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
    */
   hideWindow: (): void =>
     ipcRenderer.send(IpcChannel.HIDE_WINDOW),
+
+  /**
+   * Registers a callback for when the main process detects a config change
+   * via Supabase Realtime. Returns an unsubscribe function for cleanup.
+   */
+  onConfigUpdated: (callback: () => void): (() => void) => {
+    const handler = (_event: IpcRendererEvent) => callback();
+    ipcRenderer.on(IpcChannel.CONFIG_UPDATED, handler);
+    return () => ipcRenderer.removeListener(IpcChannel.CONFIG_UPDATED, handler);
+  },
 });
 
 // TypeScript: this file must be treated as a module.
