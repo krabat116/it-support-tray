@@ -1,0 +1,55 @@
+# ============================================================
+# .github/workflows/build.yml
+# main 브랜치에 push하면 Windows .exe 인스톨러를 자동 빌드합니다.
+# 빌드 결과물은 GitHub Actions → Artifacts에서 다운로드 가능합니다.
+# ============================================================
+
+name: Build Windows Installer
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # GitHub UI에서 수동 실행 가능
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      # 1. 코드 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Node.js 설정
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 3. 의존성 설치
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Supabase 인증 파일 생성 (GitHub Secrets에서 주입)
+      - name: Create Supabase credentials file
+        shell: bash
+        run: |
+          echo '{
+            "url": "${{ secrets.SUPABASE_URL }}",
+            "anonKey": "${{ secrets.SUPABASE_ANON_KEY }}"
+          }' > config/supabase.json
+
+      # 5. 빌드 및 패키징
+      - name: Build and package
+        run: npm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 6. .exe 아티팩트 업로드 (30일 보관)
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: IT-Support-Tool-Windows-${{ github.sha }}
+          path: release/*.exe
+          retention-days: 30

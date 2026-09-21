@@ -41,7 +41,7 @@ win:
     - target: nsis
       arch:
         - x64
-  icon: resources/icon.ico
+  icon: resources/icon.png
   # asInvoker: 앱 자체는 일반 권한으로 실행 (관리자 권한 명령만 UAC로 상승)
   requestedExecutionLevel: asInvoker
 
@@ -53,8 +53,6 @@ nsis:
   createStartMenuShortcut: true
   shortcutName: IT Support Tool
   runAfterFinish: true                   # 설치 완료 후 앱 자동 실행
-  installerIcon: resources/icon.ico
-  uninstallerIcon: resources/icon.ico
   license: null                          # 라이선스 동의 화면 건너뜀
 
 # 자동 업데이트 서버 (Phase 2에서 설정)
