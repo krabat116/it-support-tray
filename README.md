@@ -42,6 +42,17 @@ A Windows system tray application that helps end users self-resolve common IT is
 
 ---
 
+## Download
+
+The latest Windows installer is automatically built on every push to `main` via GitHub Actions.
+
+1. Go to the **[Actions](../../actions)** tab
+2. Click the most recent **Build Windows Installer** run
+3. Scroll to **Artifacts** at the bottom
+4. Download `IT-Support-Tool-Windows-xxxx.zip` → extract → run the `.exe`
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -59,10 +70,10 @@ A Windows system tray application that helps end users self-resolve common IT is
 ```
 it-support-tray/
 ├── config/
-│   └── app-config.json       # All UI labels, actions, and categories
+│   ├── app-config.json       # Fallback config (used when Supabase is unreachable)
+│   └── supabase.json         # Supabase credentials (not committed — see GitHub Secrets)
 ├── resources/
-│   ├── icon.png              # Tray icon (PNG)
-│   ├── icon.ico              # Installer icon (ICO)
+│   ├── icon.png              # Tray & installer icon
 │   └── guides/               # PDF troubleshooting guides
 ├── src/
 │   ├── main/                 # Electron main process
