@@ -46,7 +46,7 @@ export function setupAutoUpdater(): void {
     console.log('[AutoUpdater] Update downloaded:', info.version);
     new Notification({
       title: 'IT Support Tool',
-      body: `v${info.version} 업데이트 준비 완료. 앱을 재시작하면 설치됩니다.`,
+      body: `v${info.version} is ready to install. Restart the app to apply the update.`,
     }).show();
   });
 

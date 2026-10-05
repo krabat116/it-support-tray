@@ -1,6 +1,6 @@
 {
   "name": "it-support-tray",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "IT 서포트 자가진단 시스템 트레이 앱 — 고객이 간단한 문제를 스스로 해결하도록 돕습니다",
   "main": "dist/main/main.js",
   "scripts": {
