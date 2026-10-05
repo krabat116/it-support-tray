@@ -41,8 +41,9 @@ const execAsync = promisify(exec);
 async function runNormalCommand(
   command: string
 ): Promise<{ stdout: string; stderr: string }> {
+  const isWindows = process.platform === 'win32';
   return execAsync(command, {
-    shell: 'cmd.exe',  // Explicitly set cmd.exe for && chaining on Windows
+    shell: isWindows ? 'cmd.exe' : '/bin/sh',  // cmd.exe on Windows, /bin/sh on macOS
     timeout: 30_000,   // 30-second timeout
   });
 }
@@ -53,16 +54,24 @@ async function runNormalCommand(
 
 /**
  * Executes a command that requires admin privileges.
- * Triggers a UAC prompt via PowerShell Start-Process -Verb RunAs.
  *
- * Implementation details:
- *   - Escapes double quotes inside the command to prevent PowerShell parsing errors
- *   - Uses -WindowStyle Hidden to prevent cmd.exe window flicker
- *   - Uses -Wait to wait for completion before resolving
+ * Windows: Triggers a UAC prompt via PowerShell Start-Process -Verb RunAs.
+ * macOS:   Shows a native password dialog via osascript (do shell script ... with administrator privileges).
  */
 async function runAdminCommand(
   command: string
 ): Promise<{ stdout: string; stderr: string }> {
+  if (process.platform !== 'win32') {
+    // macOS: native admin authentication dialog via osascript
+    // Escape backslashes first, then double quotes (AppleScript string delimiters)
+    const escaped = command.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    return execAsync(
+      `osascript -e 'do shell script "${escaped}" with administrator privileges'`,
+      { timeout: 60_000 }
+    );
+  }
+
+  // Windows: PowerShell UAC elevation
   // Escape double quotes inside the command (inside a PowerShell string)
   const escaped = command.replace(/"/g, '`"');
 
@@ -196,15 +205,19 @@ export async function runQuickFix(
     // Detect UAC cancellation or access denied
     const isUacCancelled =
       requiresAdmin &&
-      (e.message?.includes('was canceled') ||
-        e.message?.includes('Access is denied') ||
+      (e.message?.includes('was canceled') ||        // Windows UAC canceled
+        e.message?.includes('Access is denied') ||   // Windows access denied
+        e.message?.includes('User canceled') ||      // macOS osascript cancel
+        e.message?.includes('(-128)') ||             // AppleScript user-cancel code
         e.code === 1);
 
     if (isUacCancelled) {
       return {
         actionId,
         success: false,
-        message: 'Admin permission request was cancelled. Please click "Yes" in the UAC prompt.',
+        message: process.platform === 'win32'
+          ? 'Admin permission request was cancelled. Please click "Yes" in the UAC prompt.'
+          : 'Admin permission request was cancelled. Please enter your password when prompted.',
         stderr: e.stderr,
       };
     }
