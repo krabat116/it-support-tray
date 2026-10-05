@@ -8,7 +8,7 @@ import { ipcMain, shell, app, type IpcMainInvokeEvent } from 'electron';
 import path from 'path';
 import { IpcChannel } from '../shared/types';
 import type { QuickFixRequest } from '../shared/types';
-import { loadConfig } from './config-loader';
+import { loadConfig, invalidateConfigCache } from './config-loader';
 import { runQuickFix } from './command-runner';
 import { trackUsage } from './usage-tracker';
 import { hidePopupWindow } from './window-manager';
@@ -119,6 +119,21 @@ export function registerIpcHandlers(): void {
       return { success: false, error: errorMsg };
     }
     return { success: true };
+  });
+
+  // ────────────────────────────────────────────────────────
+  // REFRESH_CONFIG: Force re-fetch config from Supabase
+  // Invalidates in-memory cache then loads fresh data.
+  // ────────────────────────────────────────────────────────
+  ipcMain.handle(IpcChannel.REFRESH_CONFIG, async () => {
+    try {
+      invalidateConfigCache();
+      const data = await loadConfig();
+      return { success: true, data };
+    } catch (err) {
+      console.error('[IPC:REFRESH_CONFIG] Failed:', err);
+      return { success: false, error: String(err) };
+    }
   });
 
   // ────────────────────────────────────────────────────────

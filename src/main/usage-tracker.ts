@@ -64,7 +64,8 @@ function saveToLocalFallback(event: UsageEvent): void {
   console.log('[UsageTracker] Saved to local fallback. Pending:', log.events.length);
 }
 
-async function flushLocalEvents(supabase: ReturnType<typeof createClient>): Promise<void> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function flushLocalEvents(supabase: any): Promise<void> {
   const log = readLocalLog();
   if (log.events.length === 0) return;
 

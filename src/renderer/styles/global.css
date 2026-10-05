@@ -67,6 +67,12 @@ body {
   -webkit-app-region: drag;
 }
 
+.app-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .app-title {
   display: flex;
   align-items: center;
@@ -80,23 +86,48 @@ body {
   font-size: 16px;
 }
 
-/* Close button is excluded from the drag region */
+/* Header buttons (refresh, close) are excluded from the drag region */
+.refresh-btn,
 .close-btn {
   -webkit-app-region: no-drag;
   background: none;
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 2px 6px;
   border-radius: var(--radius-sm);
-  font-size: 12px;
   line-height: 1;
   transition: background 0.15s, color 0.15s;
 }
 
+.refresh-btn {
+  font-size: 20px;
+  padding: 1px 5px;
+}
+
+.close-btn {
+  font-size: 12px;
+  padding: 2px 6px;
+}
+
+.refresh-btn:hover:not(:disabled),
 .close-btn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
+}
+
+.refresh-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.refresh-btn.spinning {
+  display: inline-block;
+  animation: spin 0.7s linear infinite;
 }
 
 /* Body: vertically scrollable */
@@ -217,7 +248,8 @@ body {
   color: var(--text-muted);
   letter-spacing: 0.3px;
   margin-bottom: 5px;
-  padding-left: 2px;
+  padding-left: 10px;
+  border-left: 2px solid rgba(79, 195, 247, 0.25);
   text-transform: uppercase;
 }
 

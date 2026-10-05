@@ -169,8 +169,9 @@ export function startRealtimeSync(onUpdate: () => void): void {
     const { url, anonKey } = readSupabaseCredentials();
     const supabase = createClient(url, anonKey);
 
-    const handleChange = () => {
-      console.log('[ConfigLoader] Realtime change detected — invalidating cache.');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleChange = (payload: any) => {
+      console.log(`[ConfigLoader] Realtime change received — table: ${payload?.table}, event: ${payload?.eventType}`);
       invalidateConfigCache();
       onUpdate();
     };
@@ -183,6 +184,9 @@ export function startRealtimeSync(onUpdate: () => void): void {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'guides' }, handleChange)
       .subscribe((status) => {
         console.log('[ConfigLoader] Realtime subscription status:', status);
+        if (status === 'CHANNEL_ERROR') {
+          console.error('[ConfigLoader] Realtime channel error — check Supabase Replication settings.');
+        }
       });
   } catch (err) {
     console.warn('[ConfigLoader] Realtime sync unavailable (offline or no credentials):', err);

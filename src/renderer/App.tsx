@@ -11,6 +11,7 @@ import Accordion from './components/Accordion';
 const App: React.FC = () => {
   const [config, setConfig] = useState<AppConfig | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Load config from the main process on component mount
@@ -40,6 +41,21 @@ const App: React.FC = () => {
     return unsubscribe;
   }, []);
 
+  const handleRefresh = () => {
+    setRefreshing(true);
+    window.electronAPI.refreshConfig()
+      .then(result => {
+        if (result.success && result.data) {
+          setConfig(result.data);
+          setError(null);
+        } else {
+          setError(result.error ?? 'Failed to refresh configuration.');
+        }
+      })
+      .catch(err => setError(String(err)))
+      .finally(() => setRefreshing(false));
+  };
+
   const handleClose = () => {
     window.electronAPI.hideWindow();
   };
@@ -48,9 +64,19 @@ const App: React.FC = () => {
     <div className="app-container">
       {/* ── Header ── */}
       <div className="app-header">
-        <div className="app-title">
-          <span className="app-icon">🛠️</span>
-          <span>{config?.appName ?? 'IT Support Tool'}</span>
+        <div className="app-title-group">
+          <div className="app-title">
+            <span className="app-icon">🛠️</span>
+            <span>{config?.appName ?? 'IT Support Tool'}</span>
+          </div>
+          <button
+            className={`refresh-btn${refreshing ? ' spinning' : ''}`}
+            onClick={handleRefresh}
+            disabled={refreshing}
+            title="Refresh"
+          >
+            ↻
+          </button>
         </div>
         <button className="close-btn" onClick={handleClose} title="Close">
           ✕

@@ -48,6 +48,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.send(IpcChannel.HIDE_WINDOW),
 
   /**
+   * Force-refreshes config from Supabase (bypasses cache).
+   * Use when the user manually requests a refresh.
+   */
+  refreshConfig: (): Promise<{ success: boolean; data?: AppConfig; error?: string }> =>
+    ipcRenderer.invoke(IpcChannel.REFRESH_CONFIG),
+
+  /**
    * Registers a callback for when the main process detects a config change
    * via Supabase Realtime. Returns an unsubscribe function for cleanup.
    */

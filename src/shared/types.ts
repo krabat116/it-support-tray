@@ -74,6 +74,8 @@ export const IpcChannel = {
   HIDE_WINDOW: 'hide-window',
   /** main → renderer: Config updated via Supabase Realtime */
   CONFIG_UPDATED: 'config-updated',
+  /** renderer → main: Force refresh config (invalidate cache + re-fetch) */
+  REFRESH_CONFIG: 'refresh-config',
 } as const;
 
 // ----------------------------------------------------------------
