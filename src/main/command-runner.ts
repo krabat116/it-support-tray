@@ -188,11 +188,13 @@ export async function runQuickFix(
       ? await runAdminCommand(command)
       : await runNormalCommand(command);
 
+    const out = stdout.trim();
     return {
       actionId,
       success: true,
-      message: 'Command executed successfully.',
-      stdout: stdout.trim(),
+      // If the command echoed a result message, show it; otherwise use a generic message
+      message: out || 'Command executed successfully.',
+      stdout: out,
       stderr: stderr.trim(),
     };
   } catch (err: unknown) {
