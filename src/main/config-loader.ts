@@ -70,6 +70,11 @@ async function fetchFromSupabase(): Promise<AppConfig> {
   const { url, anonKey } = readSupabaseCredentials();
   const supabase = createClient(url, anonKey);
 
+  // Map Electron's process.platform to the database platform values
+  // 'darwin' → 'mac', everything else → 'windows'
+  const currentPlatform = process.platform === 'darwin' ? 'mac' : 'windows';
+  console.log(`[ConfigLoader] Platform detected: ${currentPlatform}`);
+
   const [catRes, qfRes, scRes, guidesRes] = await Promise.all([
     supabase.from('categories').select('*').order('order'),
     supabase.from('quick_fixes').select('*').order('order'),
@@ -86,7 +91,10 @@ async function fetchFromSupabase(): Promise<AppConfig> {
 
   const categories: Category[] = (catRes.data ?? []).map((cat: Row) => {
     const quickFixes: QuickFixAction[] = (qfRes.data ?? [])
-      .filter((q: Row) => q.category_id === cat.id)
+      .filter((q: Row) =>
+        q.category_id === cat.id &&
+        (!q.platform || q.platform === currentPlatform)
+      )
       .map((q: Row) => ({
         id: q.id as string,
         label: q.label as string,
@@ -95,7 +103,10 @@ async function fetchFromSupabase(): Promise<AppConfig> {
       }));
 
     const settingsShortcuts: SettingsShortcut[] = (scRes.data ?? [])
-      .filter((s: Row) => s.category_id === cat.id)
+      .filter((s: Row) =>
+        s.category_id === cat.id &&
+        (!s.platform || s.platform === currentPlatform)
+      )
       .map((s: Row) => ({
         id: s.id as string,
         label: s.label as string,
