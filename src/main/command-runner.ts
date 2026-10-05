@@ -65,8 +65,9 @@ async function runAdminCommand(
     // macOS: native admin authentication dialog via osascript
     // Escape backslashes first, then double quotes (AppleScript string delimiters)
     const escaped = command.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    // 2>&1 merges stderr into stdout so error details are visible in the UI
     return execAsync(
-      `osascript -e 'do shell script "${escaped}" with administrator privileges'`,
+      `osascript -e 'do shell script "${escaped} 2>&1" with administrator privileges'`,
       { timeout: 60_000 }
     );
   }

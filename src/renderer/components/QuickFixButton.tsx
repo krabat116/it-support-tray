@@ -22,12 +22,14 @@ interface QuickFixButtonProps {
 const QuickFixButton: React.FC<QuickFixButtonProps> = ({ action, categoryId }) => {
   const [status, setStatus] = useState<FixStatus>('idle');
   const [message, setMessage] = useState('');
+  const [detail, setDetail] = useState('');
 
   const handleClick = async () => {
     if (status === 'running') return;  // Prevent duplicate execution
 
     setStatus('running');
     setMessage('');
+    setDetail('');
 
     try {
       const result = await window.electronAPI.executeQuickFix({
@@ -35,18 +37,28 @@ const QuickFixButton: React.FC<QuickFixButtonProps> = ({ action, categoryId }) =
         categoryId,
       });
 
-      setStatus(result.success ? 'success' : 'error');
+      const succeeded = result.success;
+      setStatus(succeeded ? 'success' : 'error');
       setMessage(result.message);
+      // Show command output detail on error so user can diagnose the issue
+      if (!succeeded) {
+        setDetail(result.stdout || result.stderr || '');
+      }
+      // Success: reset after 4s. Error: reset after 8s (give time to read the detail)
+      setTimeout(() => {
+        setStatus('idle');
+        setMessage('');
+        setDetail('');
+      }, succeeded ? 4000 : 8000);
     } catch {
       setStatus('error');
       setMessage('An unexpected error occurred.');
+      setTimeout(() => {
+        setStatus('idle');
+        setMessage('');
+        setDetail('');
+      }, 8000);
     }
-
-    // Reset to idle after 4 seconds
-    setTimeout(() => {
-      setStatus('idle');
-      setMessage('');
-    }, 4000);
   };
 
   // Button label by state
@@ -78,7 +90,10 @@ const QuickFixButton: React.FC<QuickFixButtonProps> = ({ action, categoryId }) =
 
       {/* Execution result feedback message */}
       {message && status !== 'idle' && (
-        <div className={`status-feedback ${status}`}>{message}</div>
+        <div className={`status-feedback ${status}`}>
+          {message}
+          {detail && <div className="status-detail">{detail}</div>}
+        </div>
       )}
     </div>
   );
